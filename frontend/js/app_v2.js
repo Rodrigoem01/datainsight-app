@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8000";
+// Detectar URL automáticamente (Local o Producción)
+const API_URL = window.location.origin; // "http://localhost:8000" o "https://tuhost.onrender.com"
 
 // --- AUTHENTICATION ---
 async function login(username, password) {
