@@ -20,7 +20,11 @@ async function login(username, password) {
         window.location.href = '/dashboard.html';
     } catch (error) {
         const errorDiv = document.getElementById('errorMsg');
-        errorDiv.textContent = error.message;
+        let msg = error.message;
+        if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+            msg = '⏳ El servidor se está despertando... Espera 30 seg y prueba de nuevo.';
+        }
+        errorDiv.textContent = msg;
         errorDiv.classList.remove('hidden');
     }
 }
