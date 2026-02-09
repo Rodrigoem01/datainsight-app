@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataInsight</title>
+    <link rel="icon" type="image/png" href="/logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- jsPDF & AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside
+            class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300 transform fixed md:relative z-30 h-full"
+            id="sidebar">
+            <div class="p-4 flex items-center justify-center border-b border-gray-700">
+                <img src="/logo.png" alt="Logo" class="h-10 w-auto">
+                <span
+                    class="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">DataInsight</span>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul class="space-y-2 px-2">
+                    <li>
+                        <a href="#" id="nav-dashboard" onclick="showDashboardSection()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-blue-400 bg-gray-700/50">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="nav-editor" onclick="showDataEditorSection()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Editor de Datos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="nav-reports" onclick="showReportsSection()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Reportes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="nav-users" onclick="showUserSection()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H2v-2a4 4 0 014-4h12.356M19 12a3 3 0 100-6 3 3 0 000 6zm-7 0a6 6 0 100-12 6 6 0 000 12z">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Usuarios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="nav-alerts" onclick="showAlertsSection()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Alertas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="nav-profile" onclick="openProfileModal()"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-700 group transition-colors text-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Perfil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()"
+                            class="flex items-center p-2 rounded-lg hover:bg-red-900/50 group transition-colors text-red-400 mt-10">
+                            <svg class="w-5 h-5 text-red-400 group-hover:text-white transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                </path>
+                            </svg>
+                            <span class="ml-3 group-hover:text-white">Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-gray-700">
+                <p class="text-xs text-gray-500 text-center">
+                    &copy; 2026 DataInsight<br>Todos los derechos reservados.
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <!-- Header -->
+            <header
+                class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center z-20 shadow-md transition-all duration-300"
+                id="main-header">
+                <div class="flex items-center">
+                    <button onclick="togglePresentationMode()"
+                        class="mr-4 text-gray-400 hover:text-white focus:outline-none" title="Modo Presentación">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-100">Panel Principal</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400" id="presentation-status" style="display: none;">Modo
+                        Presentación Activo</span>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Scrollable Area -->
+            <div id="dashboardSection" class="flex-1 overflow-y-auto p-6 scroll-smooth">
+
+                <!-- Welcome Section -->
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Dashboard General</h1>
+                        <p class="text-gray-400 mt-1">Vista general del rendimiento del negocio</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- File Upload Form -->
+                        <form id="uploadForm" class="flex items-center gap-2">
+                            <label
+                                class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center shadow-lg border border-blue-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                Cargar Excel (.xlsx)
+                                <input type="file" name="file" id="fileInput" class="hidden" accept=".xlsx, .csv"
+                                    onchange="uploadFile(this)">
+                            </label>
+                            <span id="headerUploadStatus"
+                                class="text-sm font-medium text-blue-400 hidden flex items-center bg-gray-700/50 px-3 py-1 rounded-full border border-blue-500/30">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-500"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span id="uploadProgressText">Preparando...</span>
+                            </span>
+                            <span id="uploadStatus" class="text-sm text-gray-400 hidden">Cargando...</span>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Executive Overview Cards (Dynamic IDs) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Sales -->
+                    <div
+                        class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg hover:border-gray-600 transition-colors relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Ventas Totales</h3>
+                            <span
+                                class="text-green-400 bg-green-900/30 px-2 py-1 rounded text-xs font-semibold">+12%</span>
+                        </div>
+                        <p class="text-3xl font-bold text-white mb-1" id="kpi-sales">$0</p>
+                        <p class="text-sm text-gray-500">Actualizado hoy</p>
+                    </div>
+
+                    <!-- Total Profit -->
+                    <div
+                        class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg hover:border-gray-600 transition-colors relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Ganancia Total</h3>
+                            <span
+                                class="text-green-400 bg-green-900/30 px-2 py-1 rounded text-xs font-semibold">+8%</span>
+                        </div>
+                        <p class="text-3xl font-bold text-white mb-1" id="kpi-profit">$0</p>
+                        <p class="text-sm text-gray-500">Margen neto</p>
+                    </div>
+
+                    <!-- Top Product -->
+                    <div
+                        class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg hover:border-gray-600 transition-colors relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-purple-500" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Producto Top</h3>
+                            <span
+                                class="text-purple-400 bg-purple-900/30 px-2 py-1 rounded text-xs font-semibold">Hot</span>
+                        </div>
+                        <p class="text-2xl font-bold text-white mb-1 truncate" id="kpi-product">-</p>
+                        <p class="text-sm text-gray-500" id="kpi-product-stat">0 vendidos</p>
+                    </div>
+
+                    <!-- Top Region -->
+                    <div
+                        class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg hover:border-gray-600 transition-colors relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-16 h-16 text-orange-500" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Mejor Región</h3>
+                            <span
+                                class="text-orange-400 bg-orange-900/30 px-2 py-1 rounded text-xs font-semibold">Líder</span>
+                        </div>
+                        <p class="text-3xl font-bold text-white mb-1" id="kpi-region">-</p>
+                        <p class="text-sm text-gray-500" id="kpi-region-stat">$0 ventas</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Map Section -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-lg mb-8 p-4">
+                    <h3 class="text-lg font-semibold text-gray-200 mb-4">Mapa de Ventas Regionales (EE.UU.)</h3>
+                    <div id="usMap" class="w-full h-96 z-10 rounded border border-gray-600"></div>
+                </div>
+
+
+
+                <!-- Data Table Section -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-lg mb-8 flex flex-col max-h-64">
+                    <div class="p-4 border-b border-gray-700 flex-shrink-0 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-200">Últimos Datos Cargados</h3>
+                        <span id="rowCount" class="text-xs text-gray-400"></span>
+                    </div>
+                    <div class="overflow-auto flex-1">
+                        <table class="w-full text-left text-gray-400" id="dataTable">
+                            <thead class="bg-gray-700 text-gray-200 uppercase text-xs sticky top-0">
+                                <tr>
+                                    <!-- Dynamic Headers -->
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- User Management Section (Hidden by default) -->
+            <div id="userSection"
+                class="hidden bg-gray-800 rounded-lg border border-gray-700 shadow-lg overflow-hidden">
+                <!-- ... existing user section content ... -->
+                <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-200">Gestión de Usuarios</h3>
+                    <button onclick="openUserModal()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded shadow transition">
+                        + Nuevo Usuario
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-gray-400" id="userTable">
+                        <thead class="bg-gray-700 text-gray-200 uppercase text-xs">
+                            <tr>
+                                <th class="py-3 px-6">ID</th>
+                                <th class="py-3 px-6">Usuario</th>
+                                <th class="py-3 px-6">Rol</th>
+                                <th class="py-3 px-6">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm" id="userTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Data Editor Section -->
+            <div id="dataEditorSection" class="hidden flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Editor de Datos</h1>
+                        <p class="text-gray-400 mt-1">Modifica los registros manualmente. Los cambios se reflejarán en
+                            el Dashboard.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-lg flex flex-col max-h-[70vh]">
+                    <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-200">Registros Activos</h3>
+                        <span id="editorRowCount" class="text-xs text-gray-400"></span>
+                    </div>
+                    <div class="overflow-auto flex-1 relative">
+                        <table class="w-full text-left text-gray-400" id="editorTable">
+                            <thead class="bg-gray-700 text-gray-200 uppercase text-xs sticky top-0 z-10">
+                                <tr>
+                                    <!-- Dynamic Headers -->
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-gray-700">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Alerts Section -->
+            <div id="alertsSection" class="hidden flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="mb-6">
+                    <h1 class="text-3xl font-bold text-white">Centro de Alertas</h1>
+                    <p class="text-gray-400 mt-1">Envía notificaciones importantes por correo electrónico.</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-lg p-6 max-w-2xl mx-auto">
+                    <form id="alertForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Destinatario (Email)</label>
+                            <input type="email" id="alertRecipient"
+                                class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                                placeholder="ejemplo@empresa.com" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Asunto</label>
+                            <input type="text" id="alertSubject"
+                                class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                                placeholder="Asunto de la alerta" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Mensaje</label>
+                            <textarea id="alertMessage" rows="5"
+                                class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                                placeholder="Escribe el detalle de la alerta..." required></textarea>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition flex justify-center items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                            Enviar Alerta
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reports Section (Hidden by default) -->
+            <!-- Reports Section -->
+            <div id="reportsSection" class="hidden flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Reportes Ejecutivos</h1>
+                        <p class="text-gray-400 mt-1">Genera y descarga informes detallados del rendimiento.</p>
+                    </div>
+                    <button onclick="generatePDF()"
+                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg border border-red-500">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Descargar PDF
+                    </button>
+                </div>
+
+                <!-- Report Preview / Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg">
+                        <h3 class="text-xl font-semibold text-white mb-4">Contenido del Reporte</h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Resumen Ejecutivo (KPIs)
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Análisis de Ventas por Región
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Top 10 Productos Más Vendidos
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Detalle de Transacciones (Muestra)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-96 border border-gray-700">
+            <h2 class="text-2xl font-bold text-white mb-6">Editar Perfil</h2>
+            <form id="profileForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Contraseña Actual (Requerido)</label>
+                    <input type="password" id="currentPassword"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                        required>
+                </div>
+                <hr class="border-gray-600 my-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Nuevo Usuario (Opcional)</label>
+                    <input type="text" id="newUsername"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Nueva Contraseña (Opcional)</label>
+                    <input type="password" id="newPassword"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeProfileModal()"
+                        class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded transition">Cancelar</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-96 border border-gray-700">
+            <h2 class="text-2xl font-bold text-white mb-6">Nuevo Usuario</h2>
+            <form id="createUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Usuario</label>
+                    <input type="text" id="newNewUsername"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Contraseña</label>
+                    <input type="password" id="newNewPassword"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Rol</label>
+                    <select id="newNewRole"
+                        class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
+                        <option value="user">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeUserModal()"
+                        class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded transition">Cancelar</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Data Modal -->
+    <div id="editDataModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-[500px] border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold text-white mb-6">Editar Registro</h2>
+            <form id="editDataForm" class="space-y-4">
+                <div id="editDataFields" class="grid grid-cols-1 gap-4">
+                    <!-- Dynamic Inputs -->
+                </div>
+                <input type="hidden" id="editRowIndex">
+
+                <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-700">
+                    <button type="button" onclick="closeEditDataModal()"
+                        class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded transition">Cancelar</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">Guardar
+                        Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/app_v2.js?v=4.0"></script>
+    <script>
+        // Inicializar Dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof showUserSection !== 'function') {
+                alert("⚠️ ALERTA DE SISTEMA ⚠️\n\nTu navegador tiene una versión antigua guardada.\n\nPor favor presiona:\nCtrl + F5 (Windows)\nCmd + Shift + R (Mac)\n\nPara recargar los nuevos cambios.");
+            }
+
+            if (!isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            // initCharts() eliminado
+
+
+            // Profile Form Handler
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newUsername = document.getElementById('newUsername').value;
+                    const newPassword = document.getElementById('newPassword').value;
+
+                    await updateProfile(currentPassword, newUsername, newPassword);
+                });
+            }
+            // Create User Form Handler
+            const createUserForm = document.getElementById('createUserForm');
+            if (createUserForm) {
+                createUserForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('newNewUsername').value;
+                    const password = document.getElementById('newNewPassword').value;
+                    const role = document.getElementById('newNewRole').value;
+
+                    await createUser(username, password, role);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

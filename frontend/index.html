@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataInsight</title>
+    <link rel="icon" type="image/png" href="/logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center h-screen overflow-hidden bg-gray-900">
+
+    <!-- Background Slider -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-black/60 z-10"></div> <!-- Overlay oscura -->
+        <div class="slideshow absolute inset-0">
+            <div class="slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-100"
+                style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80');">
+            </div>
+            <div class="slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0"
+                style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920&q=80');">
+            </div>
+            <div class="slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0"
+                style="background-image: url('https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=1920&q=80');">
+            </div>
+            <div class="slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0"
+                style="background-image: url('https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1920&q=80');">
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Card -->
+    <div
+        class="relative z-20 bg-gray-900/80 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-96 border border-gray-700/50">
+        <div class="flex justify-center mb-6">
+            <img src="/logo.png" alt="DataInsight Logo" class="h-20 drop-shadow-lg">
+        </div>
+        <h2 class="text-3xl font-bold text-white text-center mb-2 tracking-tight">DataInsight</h2>
+        <p class="text-gray-400 text-center mb-8 text-sm">Bienvenido a tu plataforma de inteligencia</p>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-gray-300 text-xs font-bold mb-2 uppercase tracking-wide">Usuario</label>
+                <input type="text" id="username"
+                    class="w-full p-3 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Ingresa tu usuario" required>
+            </div>
+            <div>
+                <label class="block text-gray-300 text-xs font-bold mb-2 uppercase tracking-wide">Contraseña</label>
+                <input type="password" id="password"
+                    class="w-full p-3 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="••••••••" required>
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg">
+                Iniciar Sesión
+            </button>
+        </form>
+        <div id="errorMsg"
+            class="text-red-400 text-sm text-center mt-4 hidden bg-red-900/30 p-2 rounded border border-red-500/30">
+        </div>
+    </div>
+
+    <script src="/js/app_v2.js"></script>
+    <script>
+        // Lógica de Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            await login(username, password);
+        });
+
+        // Lógica del Slideshow
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('opacity-100');
+            slides[currentSlide].classList.add('opacity-0');
+
+            currentSlide = (currentSlide + 1) % slides.length;
+
+            slides[currentSlide].classList.remove('opacity-0');
+            slides[currentSlide].classList.add('opacity-100');
+        }
+
+        setInterval(nextSlide, 5000); // Cambiar cada 5 segundos
+    </script>
+</body>
+
+</html>

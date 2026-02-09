@@ -1,0 +1,9 @@
+flask
+flask-cors
+sqlalchemy
+pandas
+python-multipart
+pyjwt
+bcrypt
+openpyxl
+gunicorn
