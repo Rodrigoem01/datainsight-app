@@ -18,6 +18,28 @@ app.register_blueprint(auth.bp)
 app.register_blueprint(files.bp)
 app.register_blueprint(alerts.bp)
 
+# --- AUTO-CREATE ADMIN USER ---
+def create_initial_user():
+    from .database import SessionLocal, User
+    from .routers.auth import get_password_hash
+    
+    db = SessionLocal()
+    try:
+        username = "admin"
+        if not db.query(User).filter(User.username == username).first():
+            print(f"Creando usuario inicial: {username}")
+            hashed_password = get_password_hash("password123")
+            user = User(username=username, hashed_password=hashed_password, role="admin")
+            db.add(user)
+            db.commit()
+    except Exception as e:
+        print(f"Error creando usuario inicial: {e}")
+    finally:
+        db.close()
+
+# Ejecutar creación de usuario
+create_initial_user()
+
 # Rutas estáticas
 @app.route("/")
 def serve_index():
