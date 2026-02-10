@@ -59,21 +59,42 @@ def upload_file():
             # Determinar visibilidad
             visibility = 'admin' if user_role == 'admin' else 'public'
             
+            # --- HELPER: Mapeo inteligente de columnas ---
+            # Identificar qué columna del Excel corresponde a cada campo de DB
+            cols = df.columns
+            def get_col_name(candidates):
+                for c in candidates:
+                    # Búsqueda exacta case-insensitive
+                    match = next((x for x in cols if str(x).lower().strip() == c.lower().strip()), None)
+                    if match: return match
+                return None
+
+            # Definir candidatos para cada campo
+            col_map = {
+                'order_id': get_col_name(['Order ID', 'ID Pedido', 'ID', 'Orden']),
+                'product': get_col_name(['Product Name', 'Product', 'Producto', 'Nombre Producto']),
+                'category': get_col_name(['Category', 'Categoría', 'Categoria', 'Departamento']),
+                'amount': get_col_name(['Sales', 'Amount', 'Ventas', 'Total', 'Importe']),
+                'date': get_col_name(['Order Date', 'Date', 'Fecha', 'Fecha Pedido']),
+                'region': get_col_name(['Region', 'Región', 'Zona', 'Area'])
+            }
+
             # Guardar nuevos datos
             for _, row in df.iterrows():
                 try:
+                    # Extraer valores usando el mapa detectado
                     sale = Sale(
-                        order_id=str(row.get('Order ID', '')),
-                        product=row.get('Product', 'Unknown'),
-                        category=row.get('Category', 'General'),
-                        amount=float(row.get('Amount', 0)),
-                        date=pd.to_datetime(row.get('Date', datetime.datetime.now())),
-                        region=row.get('Region', 'Global'),
+                        order_id=str(row[col_map['order_id']]) if col_map['order_id'] else f"ORD-{_}",
+                        product=str(row[col_map['product']]) if col_map['product'] else "Desconocido",
+                        category=str(row[col_map['category']]) if col_map['category'] else "General",
+                        amount=float(row[col_map['amount']]) if col_map['amount'] else 0.0,
+                        date=pd.to_datetime(row[col_map['date']]) if col_map['date'] else datetime.datetime.now(),
+                        region=str(row[col_map['region']]) if col_map['region'] else "Global",
                         visibility=visibility
                     )
                     db.add(sale)
                 except Exception as e:
-                    print(f"Error procesando fila: {e}")
+                    print(f"Error procesando fila {_}: {e}")
                     continue
             
             db.commit()
