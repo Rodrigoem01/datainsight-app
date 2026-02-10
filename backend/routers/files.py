@@ -75,6 +75,7 @@ def upload_file():
                 'product': get_col_name(['Product Name', 'Product', 'Producto', 'Nombre Producto']),
                 'category': get_col_name(['Category', 'Categoría', 'Categoria', 'Departamento']),
                 'amount': get_col_name(['Sales', 'Amount', 'Ventas', 'Total', 'Importe']),
+                'profit': get_col_name(['Profit', 'Ganancia', 'Margen', 'Utilidad']),
                 'date': get_col_name(['Order Date', 'Date', 'Fecha', 'Fecha Pedido']),
                 'region': get_col_name(['Region', 'Región', 'Zona', 'Area'])
             }
@@ -88,6 +89,7 @@ def upload_file():
                         product=str(row[col_map['product']]) if col_map['product'] else "Desconocido",
                         category=str(row[col_map['category']]) if col_map['category'] else "General",
                         amount=float(row[col_map['amount']]) if col_map['amount'] else 0.0,
+                        profit=float(row[col_map['profit']]) if col_map['profit'] else 0.0,
                         date=pd.to_datetime(row[col_map['date']]) if col_map['date'] else datetime.datetime.now(),
                         region=str(row[col_map['region']]) if col_map['region'] else "Global",
                         visibility=visibility
@@ -106,6 +108,7 @@ def upload_file():
                 "Product": s.product,
                 "Category": s.category,
                 "Amount": s.amount,
+                "Profit": s.profit,
                 "Date": s.date.strftime('%Y-%m-%d'),
                 "Region": s.region,
                 "Visibility": s.visibility
@@ -132,8 +135,10 @@ def get_data():
             "Product": s.product,
             "Category": s.category,
             "Amount": s.amount,
+            "Profit": s.profit,
             "Date": s.date.strftime('%Y-%m-%d'),
-            "Region": s.region
+            "Region": s.region,
+            "Visibility": s.visibility
         } for s in sales]
         return jsonify(data)
     finally:

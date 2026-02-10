@@ -36,6 +36,7 @@ class Sale(Base):
     product = Column(String)
     category = Column(String)
     amount = Column(Float)
+    profit = Column(Float, default=0.0)
     date = Column(DateTime)
     region = Column(String)
     visibility = Column(String, default="public") # 'public' or 'admin'
