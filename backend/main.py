@@ -38,6 +38,23 @@ def create_initial_user():
         db.close()
 
 # Ejecutar creación de usuario
+# --- CLEAR DATA ON STARTUP (Local Executable Mode) ---
+def clear_data_on_startup():
+    from .database import SessionLocal, Sale
+    db = SessionLocal()
+    try:
+        current_sales = db.query(Sale).count()
+        if current_sales > 0:
+            print(f"Limpiando {current_sales} registros antiguos al iniciar...")
+            db.query(Sale).delete()
+            db.commit()
+    except Exception as e:
+        print(f"Error limpiando datos al inicio: {e}")
+    finally:
+        db.close()
+
+# Ejecutar limpieza y creación de usuario
+clear_data_on_startup()
 create_initial_user()
 
 # Rutas estáticas
