@@ -305,8 +305,14 @@ let mapInstance = null;
 let markers = [];
 
 function updateMap(data, columns) {
-    let regionCol = columns.find(col => ['Region', 'Zona'].includes(col)) || 'Region';
-    let salesCol = columns.find(col => ['Sales', 'Ventas'].includes(col)) || 'Sales';
+    // Helper para detección robusta
+    const findCol = (options) => {
+        const found = columns.find(col => options.includes(col.toLowerCase()));
+        return found || options[0];
+    };
+
+    let regionCol = findCol(['region', 'zona', 'area']);
+    let salesCol = findCol(['amount', 'sales', 'ventas', 'total']);
 
     // Agrupar ventas por región
     let regionSales = {};
