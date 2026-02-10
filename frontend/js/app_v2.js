@@ -223,12 +223,20 @@ function toggleSort(col) {
 
 // --- ACTUALIZACIÓN DE KPIs ---
 function updateKPIs(data, columns) {
-    // Detectar columnas clave
-    let salesCol = columns.find(col => ['Amount', 'Sales', 'Ventas', 'Total'].includes(col)) || 'Amount';
-    let profitCol = columns.find(col => ['Profit', 'Ganancia'].includes(col)) || 'Profit';
-    let productCol = columns.find(col => ['Product', 'Product Name', 'Producto'].includes(col)) || 'Product';
-    let regionCol = columns.find(col => ['Region', 'Zona'].includes(col)) || 'Region';
-    let qtyCol = columns.find(col => ['Quantity', 'Cantidad'].includes(col)) || 'Quantity';
+    // Detectar columnas clave (Case Insensitive)
+    const lowerCols = columns.map(c => c.toLowerCase());
+
+    // Función helper para encontrar columna
+    const findCol = (options) => {
+        const found = columns.find(col => options.includes(col.toLowerCase()));
+        return found || options[0]; // Retorna la encontrada o la primera opción por defecto
+    };
+
+    let salesCol = findCol(['amount', 'sales', 'ventas', 'total', 'importe']);
+    let profitCol = findCol(['profit', 'ganancia', 'margen']);
+    let productCol = findCol(['product', 'product name', 'producto', 'nombre producto']);
+    let regionCol = findCol(['region', 'zona', 'area']);
+    let qtyCol = findCol(['quantity', 'cantidad', 'unidades']);
 
     let totalSales = 0;
     let totalProfit = 0;
