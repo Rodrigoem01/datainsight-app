@@ -348,11 +348,19 @@ function updateMap(data, columns) {
     markers = [];
 
     // Añadir nuevos marcadores
-    for (const [region, sales] of Object.entries(regionSales)) {
-        const coords = regionCoords[region] || regionCoords['Central']; // Default a Central si no coincide
+    console.log("Generando mapa con regiones:", Object.keys(regionSales));
 
-        // Calcular tamaño del círculo basado en ventas relativas (logarítmico para suavizar)
-        const radius = Math.log(sales) * 5000;
+    for (const [region, sales] of Object.entries(regionSales)) {
+        // Detección tolerante a mayúsculas/minúsculas
+        const regionKey = Object.keys(regionCoords).find(k => k.toLowerCase() === region.toLowerCase());
+        const coords = regionCoords[regionKey] || regionCoords['Central'];
+
+        console.log(`Region: ${region} -> Match: ${regionKey} -> Coords: ${coords}`);
+
+        // Calcular tamaño del círculo (logarítmico, mínimo 10km, máximo 100km)
+        // Evitar log(0) o negativos
+        const safeSales = Math.max(sales, 1);
+        const radius = Math.max(10000, Math.min(Math.log(safeSales) * 10000, 100000));
 
         const marker = L.circle(coords, {
             color: '#10B981', // Green

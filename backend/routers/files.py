@@ -91,7 +91,7 @@ def upload_file():
                         amount=float(row[col_map['amount']]) if col_map['amount'] else 0.0,
                         profit=float(row[col_map['profit']]) if col_map['profit'] else 0.0,
                         date=pd.to_datetime(row[col_map['date']]) if col_map['date'] else datetime.datetime.now(),
-                        region=str(row[col_map['region']]) if col_map['region'] else "Global",
+                        region=str(row[col_map['region']]).strip().title() if col_map['region'] else "Global",
                         visibility=visibility
                     )
                     db.add(sale)
