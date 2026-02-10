@@ -224,9 +224,9 @@ function toggleSort(col) {
 // --- ACTUALIZACIÓN DE KPIs ---
 function updateKPIs(data, columns) {
     // Detectar columnas clave
-    let salesCol = columns.find(col => ['Sales', 'Ventas', 'Total'].includes(col)) || 'Sales';
+    let salesCol = columns.find(col => ['Amount', 'Sales', 'Ventas', 'Total'].includes(col)) || 'Amount';
     let profitCol = columns.find(col => ['Profit', 'Ganancia'].includes(col)) || 'Profit';
-    let productCol = columns.find(col => ['Product Name', 'Producto'].includes(col)) || 'Product Name';
+    let productCol = columns.find(col => ['Product', 'Product Name', 'Producto'].includes(col)) || 'Product';
     let regionCol = columns.find(col => ['Region', 'Zona'].includes(col)) || 'Region';
     let qtyCol = columns.find(col => ['Quantity', 'Cantidad'].includes(col)) || 'Quantity';
 
