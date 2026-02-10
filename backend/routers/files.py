@@ -101,22 +101,29 @@ def upload_file():
             
             db.commit()
             
-            # Responder con los datos guardados (filtrados es opcional aquí, pero retornamos lo que se subió)
+            # Responder con los datos guardados
             sales = db.query(Sale).all()
-            data = [{
-                "Order ID": s.order_id,
-                "Product": s.product,
-                "Category": s.category,
-                "Amount": s.amount,
-                "Profit": s.profit,
-                "Date": s.date.strftime('%Y-%m-%d'),
-                "Region": s.region,
-                "Visibility": s.visibility
-            } for s in sales]
+            
+            # Helper para serializar
+            def to_dict(s):
+                return {
+                    "order_id": s.order_id,
+                    "product": s.product,
+                    "category": s.category,
+                    "amount": s.amount,
+                    "profit": s.profit,
+                    "date": s.date.strftime('%Y-%m-%d'),
+                    "region": s.region,
+                    "visibility": s.visibility
+                }
+
+            data = [to_dict(s) for s in sales]
+            columns = list(data[0].keys()) if data else []
 
             return jsonify({
                 "message": f"Datos subidos correctamente (Visibilidad: {visibility})", 
-                "data": data
+                "data": data,
+                "columns": columns
             })
 
         except Exception as e:
@@ -131,14 +138,14 @@ def get_data():
         from ..database import Sale
         sales = db.query(Sale).all()
         data = [{
-            "Order ID": s.order_id,
-            "Product": s.product,
-            "Category": s.category,
-            "Amount": s.amount,
-            "Profit": s.profit,
-            "Date": s.date.strftime('%Y-%m-%d'),
-            "Region": s.region,
-            "Visibility": s.visibility
+            "order_id": s.order_id,
+            "product": s.product,
+            "category": s.category,
+            "amount": s.amount,
+            "profit": s.profit,
+            "date": s.date.strftime('%Y-%m-%d'),
+            "region": s.region,
+            "visibility": s.visibility
         } for s in sales]
         return jsonify(data)
     finally:
