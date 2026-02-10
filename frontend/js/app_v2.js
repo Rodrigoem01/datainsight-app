@@ -894,4 +894,31 @@ document.addEventListener('DOMContentLoaded', () => {
             navUsers.parentElement.style.display = 'none'; // Ocultar el LI completo
         }
     }
+
+    // CARGAR DATOS PERSISTENTES
+    loadStoredData();
 });
+
+// --- DATA PERSISTENCE ---
+async function loadStoredData() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch(`${API_URL}/files/data`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const columns = Object.keys(data[0]);
+                updateDashboard(data, columns);
+            }
+        }
+    } catch (error) {
+        console.error("Error loading stored data:", error);
+    }
+}
